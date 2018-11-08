@@ -1,0 +1,23 @@
+{
+  "name": "ignite-webview",
+  "description": "An Ignite plugin which installs React Native WebView.",
+  "version": "0.0.1",
+  "license": "MIT",
+  "files": [
+    "README.md",
+    "plugin.js",
+    "templates"
+  ],
+  "repository": "infinitered/ignite-webview",
+  "author": {
+    "name": "Infinite Red",
+    "email": "npm@infinite.red",
+    "url": "https://github.com/infinitered/ignite"
+  },
+  "scripts": {
+    "shipit": "np"
+  },
+  "devDependencies": {
+    "np": "^2.12.0"
+  }
+}
