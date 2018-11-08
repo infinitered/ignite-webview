@@ -1,6 +1,6 @@
 # Ignite WebView
 
-Ignite plugin for adding [react-native-webview](https://github.com/facebook/react-native) to a React Native project (doesn't have to be an Ignite-powered project).
+Ignite plugin for adding [react-native-webview](https://github.com/react-native-community/react-native-webview) to a React Native project.
 
 ## Usage
 
