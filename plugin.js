@@ -19,3 +19,4 @@ const remove = async (context) => {
   // remove the example?
 }
 
+module.exports = { add, remove }
