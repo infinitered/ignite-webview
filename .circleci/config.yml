@@ -45,4 +45,28 @@ jobs:
           # Add the key to the authentication agent
           - DISPLAY=":0.0" SSH_ASKPASS="/tmp/askpass" setsid ssh-add /tmp/git_deploy_key </dev/null
       # checkout, restore_cache, run: yarn install, save_cache, etc.
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run: yarn install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
       # Run semantic-release after all the above is set.
+      - run: npx semantic-release
+workflows:
+  version: 2
+  test_and_release:
+    jobs:
+      - build
+      - coverage_test_publish:
+          requires:
+            - build
