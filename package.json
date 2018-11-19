@@ -6,7 +6,8 @@
   "files": [
     "README.md",
     "plugin.js",
-    "templates"
+    "templates",
+    "test.js"
   ],
   "repository": "infinitered/ignite-webview",
   "author": {
@@ -15,9 +16,11 @@
     "url": "https://github.com/infinitered/ignite"
   },
   "scripts": {
-    "shipit": "np"
+    "shipit": "np",
+    "test": "node test.js"
   },
   "devDependencies": {
-    "np": "^2.12.0"
+    "np": "^2.12.0",
+    "semantic-release": "^15.12.0"
   }
 }
