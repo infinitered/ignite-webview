@@ -2,71 +2,88 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
+
+defaults: &defaults
+  docker:
+    - image: circleci/node:10.11
+  working_directory: ~/repo
+
 version: 2
 jobs:
-  build:
-    docker:
-      - image: circleci/node:10.11
-    working_directory: ~/repo
-
+  setup:
+    <<: *defaults
     steps:
       - checkout
-
-      # Download and cache dependencies
       - restore_cache:
+          name: Restore node modules
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-
-      - run: yarn install
-
+      - run:
+          name: Install dependencies
+          command: yarn install
       - save_cache:
+          name: Save node modules
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      # run tests!
-      - run: yarn test
-  coverage_test_publish:
-    docker:
-      - image: circleci/node:10.11
-    working_directory: ~/repo
+
+  tests:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+        name: Restore node modules
+        keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+      - run:
+        name: Run tests
+        command: yarn ci:test
+
+  publish:
+    <<: *defaults
     steps:
       - run:
-          # Decrypt the git_deploy_key.enc key into /tmp/git_deploy_key
-          - openssl aes-256-cbc -d -K $REPO_ENC_KEY -iv $REPO_ENC_IV -in git_deploy_key.enc -out /tmp/git_deploy_key
-          # Make sure only the current user can read the private key
-          - chmod 600 /tmp/git_deploy_key
-          # Create a script to return the passphrase environment variable to ssh-add
-          - echo 'echo ${SSH_PASSPHRASE}' > /tmp/askpass && chmod +x /tmp/askpass
-          # Start the authentication agent
-          - eval "$(ssh-agent -s)"
-          # Add the key to the authentication agent
-          - DISPLAY=":0.0" SSH_ASKPASS="/tmp/askpass" setsid ssh-add /tmp/git_deploy_key </dev/null
-      # checkout, restore_cache, run: yarn install, save_cache, etc.
+        name: Setup SSH auth
+        command:
+            # Decrypt the git_deploy_key.enc key into /tmp/git_deploy_key
+            - openssl aes-256-cbc -d -K $REPO_ENC_KEY -iv $REPO_ENC_IV -in git_deploy_key.enc -out /tmp/git_deploy_key
+            # Make sure only the current user can read the private key
+            - chmod 600 /tmp/git_deploy_key
+            # Create a script to return the passphrase environment variable to ssh-add
+            - echo 'echo ${SSH_PASSPHRASE}' > /tmp/askpass && chmod +x /tmp/askpass
+            # Start the authentication agent
+            - eval "$(ssh-agent -s)"
+            # Add the key to the authentication agent
+            - DISPLAY=":0.0" SSH_ASKPASS="/tmp/askpass" setsid ssh-add /tmp/git_deploy_key </dev/null
       - checkout
-
-      # Download and cache dependencies
       - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-
-      - run: yarn install
-
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+        name: Restore node modules
+        keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
       # Run semantic-release after all the above is set.
-      - run: npx semantic-release
+      - run:
+        name: Publish to NPM
+        command: yarn ci:publish
+
+
 workflows:
   version: 2
   test_and_release:
     jobs:
-      - build
-      - coverage_test_publish:
+      - setup
+      - tests:
           requires:
-            - build
+            - setup
+      - publish:
+          requires:
+            - tests
+          filters:
+            branches:
+              only: master
