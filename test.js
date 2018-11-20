@@ -1,5 +1,5 @@
 /**
- * Super simple tests.
+ * Super simple testing.
  */
 
 const NPM_NAME = "react-native-webview";
