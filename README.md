@@ -26,7 +26,7 @@ MIT - Copyright 2018-present Infinite Red, Inc.
 
 ## Sponsor
 
-Sponsored by [Infinite Red](https://infinite.red/reactnative), a mobile and web design and development agency.
+Sponsored by [Infinite Red](https://infinite.red/reactnative), a mobile and web design and development agency. [View our Github](https://github.com/infinitered) for more great Ignite projects.
 
 ## Core Contributors
 
