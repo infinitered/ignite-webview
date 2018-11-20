@@ -18,6 +18,8 @@ jobs:
           name: Restore node modules
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
       - run:
           name: Install dependencies
           command: yarn install
@@ -33,21 +35,21 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-        name: Restore node modules
-        keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+          name: Restore node modules
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
       - run:
-        name: Run tests
-        command: yarn ci:test
+          name: Run tests
+          command: yarn ci:test
 
   publish:
     <<: *defaults
     steps:
       - run:
-        name: Setup SSH auth
-        command:
+          name: Setup SSH auth
+          command:
             # Decrypt the git_deploy_key.enc key into /tmp/git_deploy_key
             - openssl aes-256-cbc -d -K $REPO_ENC_KEY -iv $REPO_ENC_IV -in git_deploy_key.enc -out /tmp/git_deploy_key
             # Make sure only the current user can read the private key
@@ -60,15 +62,15 @@ jobs:
             - DISPLAY=":0.0" SSH_ASKPASS="/tmp/askpass" setsid ssh-add /tmp/git_deploy_key </dev/null
       - checkout
       - restore_cache:
-        name: Restore node modules
-        keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+          name: Restore node modules
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
       # Run semantic-release after all the above is set.
       - run:
-        name: Publish to NPM
-        command: yarn ci:publish
+          name: Publish to NPM
+          command: yarn ci:publish
 
 
 workflows:
