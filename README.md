@@ -22,7 +22,7 @@ Check out the [React Native Webview documentation](https://github.com/react-nati
 
 ## License
 
-MIT
+MIT - Copyright 2018-present Infinite Red, Inc.
 
 ## Sponsor
 
@@ -30,5 +30,5 @@ Sponsored by [Infinite Red](https://infinite.red/reactnative), a mobile and web 
 
 ## Core Contributors
 
-* Jamon Holmgren [@jamonholmgren](https://twitter.com/jamonholmgren)
-* Morgan Laco [@morgancodes](https://twitter.com/morgancodes)
+- Jamon Holmgren [@jamonholmgren](https://twitter.com/jamonholmgren)
+- Morgan Laco [@morgancodes](https://twitter.com/morgancodes)
